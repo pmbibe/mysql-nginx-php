@@ -22,7 +22,7 @@
     shell: " yum -y localinstall https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm && \
              yum -y update && \
              yum -y install mysql-community-server && \
-             service mysql start "
+             service mysqld start "
   - name: Get default password mysql
     shell: " grep 'temporary password' /var/log/mysqld.log | awk '{print($11)}' "
     register: password
@@ -37,4 +37,4 @@
   - name: Tunning system
     template: src=sysctl.conf dest=/etc/sysctl.conf
   - name: Restart mysql
-    shell: "service mysql restart"
+    shell: "service mysqld restart"
