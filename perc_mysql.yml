@@ -1,0 +1,30 @@
+---
+- name: Install GlusterFS
+  hosts: all
+
+  tasks:
+  - name: Add repo NGINX
+    template: src=nginx.repo dest=/etc/yum.repos.d/nginx.repo
+  - name: Install NGINX
+    shell: " yum -y update && \
+             yum -y install nginx && \
+             systemctl start nginx "
+  - name: Install PHP-FPM
+    shell: " yum -y install epel-release && \
+             yum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm && \
+             yum -y install yum-utils && \
+             yum-config-manager --enable remi-php72 && \
+             yum -y update && \
+             yum -y install php && \
+             yum -y install php-fpm php-gd php-json php-mbstring php-mysqlnd php-xml php-xmlrpc php-opcache && \
+             systemctl start php-fpm "
+  - name: Install MySQL
+    shell: " yum -y install https://repo.percona.com/yum/percona-release-latest.noarch.rpm && \
+             yum -y install Percona-XtraDB-Cluster-57 && \
+             yum -y update && \
+             service mysql start "
+  - name: Retrieve stuff from mysql
+    command: >
+      pass=$(grep 'temporary password' /var/log/mysqld.log | awk '{print($11)}') && mysql -uroot -p$pass -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'Vega123312##';" --connect-expired-password
+    check_mode: no
+    changed_when: False
