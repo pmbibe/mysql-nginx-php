@@ -1,5 +1,5 @@
 ---
-- name: Install GlusterFS
+- name: Install mysql-nginx-phpfpm
   hosts: all
 
   tasks:
@@ -19,12 +19,22 @@
              yum -y install php-fpm php-gd php-json php-mbstring php-mysqlnd php-xml php-xmlrpc php-opcache && \
              systemctl start php-fpm "
   - name: Install MySQL
-    shell: " yum -y install https://repo.percona.com/yum/percona-release-latest.noarch.rpm && \
-             yum -y install Percona-XtraDB-Cluster-57 && \
+    shell: " yum localinstall https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm && \
              yum -y update && \
+             yum -y install mysql-community-server && \
              service mysql start "
+  - name: Get default password mysql
+    shell: " grep 'temporary password' /var/log/mysqld.log | awk '{print($11)}' "
+    register: password
+    ignore_errors: True
   - name: Retrieve stuff from mysql
     command: >
-      pass=$(grep 'temporary password' /var/log/mysqld.log | awk '{print($11)}') && mysql -uroot -p$pass -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'Vega123312##';" --connect-expired-password
+       mysql -uroot -p{{ password.stdout }} --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'Vega123312##';"
     check_mode: no
     changed_when: False
+  - name: Tunning Mysql
+    template: src=my.cnf dest=/etc/my.cnf
+  - name: Tunning system
+    template: src=sysctl.conf dest=/etc/sysctl.conf
+  - name: Restart mysql
+    shell: "service mysql restart"
