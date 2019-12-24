@@ -19,7 +19,7 @@
              yum -y install php-fpm php-gd php-json php-mbstring php-mysqlnd php-xml php-xmlrpc php-opcache && \
              systemctl start php-fpm "
   - name: Install MySQL
-    shell: " yum localinstall https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm && \
+    shell: " yum -y localinstall https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm && \
              yum -y update && \
              yum -y install mysql-community-server && \
              service mysql start "
