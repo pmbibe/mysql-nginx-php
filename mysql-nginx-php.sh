@@ -32,11 +32,3 @@ systemctl start php-fpm
 yum -y localinstall https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
 yum -y install mysql-community-server
 grep 'A temporary password' /var/log/mysqld.log |tail -1
-
-
-
-CHANGE MASTER TO MASTER_HOST='WifiMark1',
-         MASTER_USER='repl_user',
-         MASTER_PASSWORD='Vega123312##',
-         MASTER_LOG_FILE='mysql-wifi.000001',
-         MASTER_LOG_POS=154;
